@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Recipe Detail 🇪🇹</title>
+  <style>
+    :root {
+      --bg:#fdf6ec; --surface:#ffffff; --border:#f5d9b0;
+      --text:#2d2d2d; --muted:#888; --accent:#c0440a;
+      --dark:#7b2d00; --nav-bg:#fff8f0; --input-bg:#ffffff;
+    }
+    [data-theme="dark"] {
+      --bg:#1a1208; --surface:#2a1e0f; --border:#4a3520;
+      --text:#f0e0c8; --muted:#a08060; --accent:#e8890a;
+      --dark:#ffb347; --nav-bg:#231708; --input-bg:#2a1e0f;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; background:var(--bg); color:var(--text); transition:background 0.3s,color 0.3s; }
+
+    .top-bar {
+      background:linear-gradient(135deg,#7b2d00,#c0440a,#e8890a);
+      padding:14px 24px; display:flex; align-items:center; justify-content:space-between;
+    }
+    .back-btn {
+      background:rgba(255,255,255,0.15); border:none; color:white;
+      padding:8px 18px; border-radius:20px; cursor:pointer; font-size:0.9rem; font-weight:600;
+      display:flex; align-items:center; gap:6px; transition:background 0.2s;
+    }
+    .back-btn:hover { background:rgba(255,255,255,0.3); }
+    .icon-btn { background:rgba(255,255,255,0.15); border:none; border-radius:50%; width:38px; height:38px; font-size:1rem; cursor:pointer; color:white; display:flex; align-items:center; justify-content:center; }
+    .icon-btn:hover { background:rgba(255,255,255,0.3); }
+
+    .hero {
+      background:linear-gradient(135deg,#7b2d00,#c0440a);
+      padding:40px 24px 50px; text-align:center; color:white;
+    }
+    .hero-emoji { font-size:5rem; margin-bottom:16px; display:block; }
+    .hero h1 { font-size:2rem; font-weight:800; }
+    .hero .amharic { font-size:1.1rem; opacity:0.8; font-style:italic; margin-top:6px; }
+    .hero-tags { display:flex; justify-content:center; gap:10px; margin-top:14px; flex-wrap:wrap; }
+    .hero-tag { background:rgba(255,255,255,0.2); color:white; padding:5px 14px; border-radius:14px; font-size:0.78rem; font-weight:700; text-transform:uppercase; }
+    .fasting-hero-tag { background:rgba(100,220,100,0.25); }
+
+    .container { max-width:800px; margin:0 auto; padding:30px 20px 60px; }
+
+    .card-section {
+      background:var(--surface); border-radius:16px; padding:24px;
+      box-shadow:0 4px 16px rgba(0,0,0,0.08); margin-bottom:20px;
+    }
+    .section-title {
+      font-size:0.78rem; font-weight:800; text-transform:uppercase;
+      letter-spacing:1px; color:var(--accent); margin-bottom:14px;
+      display:flex; align-items:center; gap:8px;
+    }
+    .section-title::after { content:''; flex:1; height:2px; background:var(--border); border-radius:2px; }
+
+    .description-text { font-size:0.97rem; color:var(--text); line-height:1.8; }
+
+    /* Calorie calculator */
+    .cal-display { display:flex; align-items:center; gap:20px; margin-bottom:16px; }
+    .cal-big { font-size:3rem; font-weight:900; color:var(--accent); line-height:1; }
+    .cal-info { font-size:0.88rem; color:var(--muted); }
+    .cal-info strong { color:var(--text); font-size:1rem; }
+    .cal-range-label { font-size:0.9rem; color:var(--accent); font-weight:700; margin-bottom:14px; }
+    .serving-row { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+    .serving-row label { font-size:0.88rem; color:var(--muted); font-weight:600; }
+    .serving-ctrl { display:flex; align-items:center; gap:8px; }
+    .srv-btn { width:34px; height:34px; border-radius:50%; border:2px solid var(--accent); background:var(--surface); color:var(--accent); font-size:1.1rem; cursor:pointer; font-weight:700; transition:all 0.2s; }
+    .srv-btn:hover { background:var(--accent); color:white; }
+    #servingCount { font-size:1.2rem; font-weight:800; color:var(--text); min-width:30px; text-align:center; }
+    .total-cal-box { margin-top:14px; background:linear-gradient(135deg,#fff0e0,#fdf6ec); border:2px solid var(--border); border-radius:12px; padding:14px 18px; }
+    [data-theme="dark"] .total-cal-box { background:linear-gradient(135deg,#2a1e0f,#1a1208); }
+    .total-cal-box .lbl { font-size:0.8rem; color:var(--muted); }
+    .total-cal-box .val { font-size:1.6rem; font-weight:900; color:var(--accent); }
+
+    /* Ingredients */
+    .ingredient-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .ingredient-item { display:flex; align-items:center; gap:8px; background:var(--nav-bg); border:1px solid var(--border); border-radius:10px; padding:9px 12px; font-size:0.88rem; }
+    .dot { width:8px; height:8px; border-radius:50%; background:#e8890a; flex-shrink:0; }
+
+    /* Steps */
+    .steps-list { display:flex; flex-direction:column; gap:12px; }
+    .step-item { display:flex; gap:14px; align-items:flex-start; }
+    .step-num { width:32px; height:32px; border-radius:50%; background:var(--accent); color:white; font-size:0.85rem; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .step-text { font-size:0.92rem; color:var(--text); line-height:1.6; padding-top:5px; }
+
+    /* Benefits */
+    .benefits-list { display:flex; flex-direction:column; gap:10px; }
+    .benefit-item { display:flex; align-items:flex-start; gap:12px; font-size:0.92rem; color:var(--text); line-height:1.5; }
+    .b-icon { font-size:1.2rem; flex-shrink:0; }
+
+    /* Heart fav */
+    .fav-section { display:flex; justify-content:center; margin-bottom:20px; }
+    .big-fav-btn { background:var(--surface); border:2px solid var(--border); border-radius:14px; padding:12px 30px; font-size:1rem; cursor:pointer; color:var(--text); font-weight:600; display:flex; align-items:center; gap:8px; transition:all 0.2s; box-shadow:0 2px 8px rgba(0,0,0,0.07); }
+    .big-fav-btn:hover { border-color:var(--accent); }
+    .big-fav-btn.fav { border-color:#e53e3e; color:#e53e3e; }
+
+    footer { text-align:center; padding:22px; background:#7b2d00; color:rgba(255,255,255,0.75); font-size:0.85rem; }
+    footer strong { color:white; }
+
+    @media(max-width:600px) {
+      .hero h1 { font-size:1.5rem; }
+      .ingredient-grid { grid-template-columns:1fr; }
+      .cal-big { font-size:2.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">← Back to Recipes</button>
+  <button class="icon-btn" onclick="toggleDark()" id="darkToggle" title="Toggle dark mode">🌙</button>
+</div>
+
+<div class="hero" id="hero">
+  <span class="hero-emoji" id="heroEmoji"></span>
+  <h1 id="heroTitle"></h1>
+  <div class="amharic" id="heroAmharic"></div>
+  <div class="hero-tags" id="heroTags"></div>
+</div>
+
+<div class="container">
+
+  <div class="fav-section">
+    <button class="big-fav-btn" id="favBtn" onclick="toggleFav()">🤍 Save to Favorites</button>
+  </div>
+
+  <div class="card-section">
+    <div class="section-title">📖 About the Dish</div>
+    <p class="description-text" id="descText"></p>
+  </div>
+
+  <div class="card-section">
+    <div class="section-title">🔥 Calories & Serving Calculator</div>
+    <div class="cal-display">
+      <div class="cal-big" id="calBig"></div>
+      <div class="cal-info">
+        <strong>kcal per serving</strong><br>
+        <span id="calNote"></span>
+      </div>
+    </div>
+    <div class="cal-range-label" id="calRange"></div>
+    <div class="serving-row">
+      <label>Cooking for:</label>
+      <div class="serving-ctrl">
+        <button class="srv-btn" onclick="changeServing(-1)">−</button>
+        <span id="servingCount">1</span>
+        <button class="srv-btn" onclick="changeServing(1)">+</button>
+      </div>
+      <label>people</label>
+    </div>
+    <div class="total-cal-box">
+      <div class="lbl">Total estimated calories</div>
+      <div class="val" id="totalCal"></div>
+    </div>
+  </div>
+
+  <div class="card-section">
+    <div class="section-title">🧂 Ingredients</div>
+    <div class="ingredient-grid" id="ingredientGrid"></div>
+  </div>
+
+  <div class="card-section">
+    <div class="section-title">👨‍🍳 How to Make It</div>
+    <div class="steps-list" id="stepsList"></div>
+  </div>
+
+  <div class="card-section">
+    <div class="section-title">💚 Health Benefits</div>
+    <div class="benefits-list" id="benefitsList"></div>
+  </div>
+
+</div>
+
+<footer>
+  <strong>Ethiopian Recipe Collection</strong> — Celebrating the rich flavors of Ethiopia 🇪🇹
+</footer>
+
+<script src="recipes-data.js"></script>
+<script>
+const params = new URLSearchParams(window.location.search);
+const id = parseInt(params.get('id'));
+const r = recipes.find(x => x.id === id);
+
+if (!r) {
+  document.body.innerHTML = '<div style="text-align:center;padding:60px;font-size:1.1rem;">Recipe not found. <a href="recipe.html">← Go back</a></div>';
+  throw new Error('Recipe not found');
+}
+
+let servings = 1;
+let favorites = JSON.parse(localStorage.getItem('ethFavs') || '[]');
+
+// Populate hero
+document.title = r.name + ' 🇪🇹';
+document.getElementById('heroEmoji').textContent = r.emoji;
+document.getElementById('heroTitle').textContent = r.name;
+document.getElementById('heroAmharic').textContent = r.amharic;
+
+const tagsEl = document.getElementById('heroTags');
+tagsEl.innerHTML = `<span class="hero-tag">${r.tagLabel}</span>`;
+if (r.fasting) tagsEl.innerHTML += `<span class="hero-tag fasting-hero-tag">🌿 Fasting Friendly</span>`;
+
+// Description
+document.getElementById('descText').textContent = r.description;
+
+// Calories
+document.getElementById('calBig').textContent = r.calories;
+document.getElementById('calNote').textContent = r.calNote;
+document.getElementById('calRange').textContent = '📊 Range: ' + r.calRange;
+updateCalc();
+
+// Ingredients
+document.getElementById('ingredientGrid').innerHTML =
+  r.ingredients.map(i => `<div class="ingredient-item"><div class="dot"></div>${i}</div>`).join('');
+
+// Steps
+document.getElementById('stepsList').innerHTML =
+  r.steps.map((s, i) => `<div class="step-item"><div class="step-num">${i+1}</div><div class="step-text">${s}</div></div>`).join('');
+
+// Benefits
+document.getElementById('benefitsList').innerHTML =
+  r.benefits.map(b => `<div class="benefit-item"><span class="b-icon">${b.icon}</span>${b.text}</div>`).join('');
+
+// Fav button
+updateFavBtn();
+
+function updateCalc() {
+  document.getElementById('servingCount').textContent = servings;
+  document.getElementById('totalCal').textContent = (r.calories * servings) + ' kcal (approx.)';
+}
+
+function changeServing(delta) {
+  servings = Math.max(1, Math.min(20, servings + delta));
+  updateCalc();
+}
+
+function toggleFav() {
+  if (favorites.includes(r.id)) favorites = favorites.filter(f => f !== r.id);
+  else favorites.push(r.id);
+  localStorage.setItem('ethFavs', JSON.stringify(favorites));
+  updateFavBtn();
+}
+
+function updateFavBtn() {
+  const btn = document.getElementById('favBtn');
+  const isFav = favorites.includes(r.id);
+  btn.textContent = isFav ? '❤️ Saved to Favorites' : '🤍 Save to Favorites';
+  btn.classList.toggle('fav', isFav);
+}
+
+function toggleDark() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('darkToggle').textContent = isDark ? '🌙' : '☀️';
+  localStorage.setItem('ethTheme', isDark ? 'light' : 'dark');
+}
+
+const savedTheme = localStorage.getItem('ethTheme');
+if (savedTheme) {
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  document.getElementById('darkToggle').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+}
+</script>
+</body>
+</html>
