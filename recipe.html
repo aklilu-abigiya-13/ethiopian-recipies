@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ethiopian Recipes 🇪🇹</title>
+  <style>
+    :root {
+      --bg: #fdf6ec; --surface: #ffffff; --border: #f5d9b0;
+      --text: #2d2d2d; --muted: #888; --accent: #c0440a;
+      --accent2: #e8890a; --dark: #7b2d00; --nav-bg: #fff8f0;
+      --card-shadow: 0 4px 16px rgba(0,0,0,0.09);
+      --input-bg: #ffffff;
+    }
+    [data-theme="dark"] {
+      --bg: #1a1208; --surface: #2a1e0f; --border: #4a3520;
+      --text: #f0e0c8; --muted: #a08060; --accent: #e8890a;
+      --accent2: #ffb347; --dark: #ffb347; --nav-bg: #231708;
+      --card-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      --input-bg: #2a1e0f;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; background:var(--bg); color:var(--text); transition:background 0.3s,color 0.3s; }
+
+    /* HEADER */
+    header { background:linear-gradient(135deg,#7b2d00 0%,#c0440a 60%,#e8890a 100%); color:white; padding:40px 20px 30px; text-align:center; position:relative; }
+    header .flag { font-size:2.2rem; margin-bottom:8px; }
+    header h1 { font-size:2.2rem; font-weight:800; }
+    header p { margin-top:6px; font-size:1rem; opacity:0.88; }
+    .header-btns { position:absolute; top:16px; right:20px; display:flex; gap:10px; }
+    .icon-btn { background:rgba(255,255,255,0.15); border:none; border-radius:50%; width:40px; height:40px; font-size:1.1rem; cursor:pointer; color:white; display:flex; align-items:center; justify-content:center; transition:background 0.2s; }
+    .icon-btn:hover { background:rgba(255,255,255,0.3); }
+
+    /* CONTROLS */
+    .controls { background:var(--nav-bg); border-bottom:2px solid var(--border); padding:16px 20px; }
+    .search-row { max-width:1150px; margin:0 auto 14px; display:flex; gap:10px; }
+    #searchInput {
+      flex:1; padding:11px 18px; font-size:0.95rem; border:2px solid var(--border);
+      border-radius:12px; outline:none; background:var(--input-bg); color:var(--text);
+      transition:border-color 0.2s;
+    }
+    #searchInput:focus { border-color:var(--accent); }
+    .filter-row { max-width:1150px; margin:0 auto; display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+    .filter-btn {
+      padding:7px 16px; border:2px solid var(--accent); border-radius:24px;
+      background:var(--surface); color:var(--accent); font-size:0.82rem; font-weight:600;
+      cursor:pointer; transition:all 0.2s;
+    }
+    .filter-btn:hover, .filter-btn.active { background:var(--accent); color:white; }
+    .fasting-btn { border-color:#2d6a2d; color:#2d6a2d; }
+    .fasting-btn:hover, .fasting-btn.active { background:#2d6a2d; color:white; }
+    .stats { max-width:1150px; margin:10px auto 0; font-size:0.85rem; color:var(--muted); }
+
+    /* GRID */
+    main { max-width:1150px; margin:28px auto 60px; padding:0 20px; }
+    .card-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:22px; }
+
+    /* CARD */
+    .card {
+      background:var(--surface); border-radius:16px; overflow:hidden;
+      box-shadow:var(--card-shadow); cursor:pointer; display:flex; flex-direction:column;
+      transition:transform 0.2s,box-shadow 0.2s;
+      opacity:0; transform:translateY(20px); animation:fadeUp 0.4s forwards;
+    }
+    @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+    .card:hover { transform:translateY(-6px); box-shadow:0 14px 32px rgba(0,0,0,0.15); }
+    .card-banner { height:10px; background:linear-gradient(90deg,#7b2d00,#e8890a); }
+    .card-body { padding:18px 18px 12px; flex:1; display:flex; flex-direction:column; gap:10px; }
+    .card-top { display:flex; justify-content:space-between; align-items:flex-start; }
+
+    .tag { display:inline-block; padding:4px 11px; border-radius:14px; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; }
+    .tag-stew      { background:#fff0e0; color:#c0440a; }
+    .tag-bread     { background:#fef9e7; color:#b7770d; }
+    .tag-breakfast { background:#e8f8e8; color:#2d6a2d; }
+    .tag-porridge  { background:#f5eef8; color:#7d3c98; }
+    .tag-snack     { background:#fde8f0; color:#b03060; }
+    .tag-grain     { background:#f0ece0; color:#7a5c1e; }
+    .tag-salad     { background:#eafaf1; color:#1a7a4a; }
+    .tag-drink     { background:#eaf4fb; color:#1a5276; }
+    [data-theme="dark"] .tag-stew      { background:#3a1a00; color:#ffb380; }
+    [data-theme="dark"] .tag-bread     { background:#2a2000; color:#ffd080; }
+    [data-theme="dark"] .tag-breakfast { background:#0a2010; color:#80d080; }
+    [data-theme="dark"] .tag-porridge  { background:#1e0a2a; color:#d080ff; }
+    [data-theme="dark"] .tag-snack     { background:#2a0a18; color:#ff80b0; }
+    [data-theme="dark"] .tag-grain     { background:#1e1800; color:#c0a060; }
+    [data-theme="dark"] .tag-salad     { background:#0a1e12; color:#60c080; }
+    [data-theme="dark"] .tag-drink     { background:#0a1828; color:#80c0ff; }
+
+    .heart-btn { background:none; border:none; font-size:1.3rem; cursor:pointer; line-height:1; padding:0; transition:transform 0.15s; flex-shrink:0; }
+    .heart-btn:hover { transform:scale(1.25); }
+    .heart-btn.fav { color:#e53e3e; }
+    .heart-btn:not(.fav) { color:#ccc; }
+
+    .food-img { width:100%; height:160px; object-fit:cover; border-radius:10px; background:#f0e0c8; display:flex; align-items:center; justify-content:center; font-size:3.5rem; overflow:hidden; }
+    .food-img img { width:100%; height:100%; object-fit:cover; border-radius:10px; }
+    .food-emoji { width:100%; height:160px; border-radius:10px; background:linear-gradient(135deg,#fff0e0,#fdf6ec); display:flex; align-items:center; justify-content:center; font-size:4rem; }
+    [data-theme="dark"] .food-emoji { background:linear-gradient(135deg,#2a1e0f,#1a1208); }
+
+    .card h2 { font-size:1.1rem; color:var(--dark); line-height:1.4; }
+    .card .amharic { font-size:0.85rem; color:var(--accent); font-style:italic; }
+    .card .description { font-size:0.83rem; color:var(--muted); line-height:1.6; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+
+    .calorie-bar { display:flex; align-items:center; gap:8px; }
+    .cal-track { flex:1; height:7px; background:var(--border); border-radius:10px; overflow:hidden; }
+    .cal-fill { height:100%; border-radius:10px; background:linear-gradient(90deg,#c0440a,#e8890a); }
+    .cal-label { font-size:0.78rem; font-weight:700; color:var(--accent); white-space:nowrap; }
+
+    .fasting-badge { display:inline-block; background:#e8f8e8; color:#2d6a2d; font-size:0.68rem; font-weight:700; padding:2px 8px; border-radius:10px; }
+    [data-theme="dark"] .fasting-badge { background:#0a2010; color:#80d080; }
+
+    .card-footer { padding:10px 18px; background:var(--nav-bg); border-top:1px solid var(--border); font-size:0.78rem; color:var(--muted); display:flex; justify-content:space-between; align-items:center; }
+    .view-btn { background:var(--accent); color:white; border:none; padding:5px 14px; border-radius:8px; font-size:0.78rem; cursor:pointer; font-weight:600; transition:background 0.2s; }
+    .view-btn:hover { background:var(--dark); }
+
+    .no-results { text-align:center; color:var(--muted); padding:60px 20px; font-size:1rem; grid-column:1/-1; }
+
+    footer { text-align:center; padding:24px; background:#7b2d00; color:rgba(255,255,255,0.75); font-size:0.85rem; }
+    footer strong { color:white; }
+
+    @media(max-width:600px) {
+      header h1 { font-size:1.5rem; }
+      .card-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-btns">
+    <button class="icon-btn" id="darkToggle" title="Toggle dark mode" onclick="toggleDark()">🌙</button>
+  </div>
+  <div class="flag">🇪🇹</div>
+  <h1>Ethiopian Recipes</h1>
+  <p>34 Traditional & modern Ethiopian dishes</p>
+</header>
+
+<div class="controls">
+  <div class="search-row">
+    <input type="text" id="searchInput" placeholder="🔍  Search recipes... (e.g. Injera, Tibs, Doro)" oninput="applyFilters()"/>
+  </div>
+  <div class="filter-row">
+    <button class="filter-btn active" data-cat="all" onclick="setCat('all',this)">🍽️ All</button>
+    <button class="filter-btn" data-cat="stew" onclick="setCat('stew',this)">🥘 Stews</button>
+    <button class="filter-btn" data-cat="bread" onclick="setCat('bread',this)">🫓 Breads</button>
+    <button class="filter-btn" data-cat="breakfast" onclick="setCat('breakfast',this)">🍳 Breakfast</button>
+    <button class="filter-btn" data-cat="porridge" onclick="setCat('porridge',this)">🥣 Porridge</button>
+    <button class="filter-btn" data-cat="snack" onclick="setCat('snack',this)">🍿 Snacks</button>
+    <button class="filter-btn" data-cat="grain" onclick="setCat('grain',this)">🌾 Grains</button>
+    <button class="filter-btn" data-cat="salad" onclick="setCat('salad',this)">🥗 Sides</button>
+    <button class="filter-btn" data-cat="drink" onclick="setCat('drink',this)">🍵 Drinks</button>
+    <button class="filter-btn fasting-btn" id="fastingBtn" onclick="toggleFasting(this)">🌿 Fasting Only</button>
+    <button class="filter-btn" id="favBtn" onclick="toggleFavFilter(this)">❤️ Favorites</button>
+  </div>
+  <div class="stats" id="stats"></div>
+</div>
+
+<main>
+  <div class="card-grid" id="recipe-grid"></div>
+</main>
+
+<footer>
+  <strong>Ethiopian Recipe Collection</strong> — Celebrating the rich flavors of Ethiopia 🇪🇹
+</footer>
+<script src="recipes-data.js"></script>
+<script>
+/* DATA LOADED FROM recipes-data.js — dummy array below is ignored */
+if (false) { const _ignore = [{ id:1, name:"Injera", amharic:"እንጀራ", category:"bread", tagLabel:"Bread", tagClass:"tag-bread", emoji:"🫓", fasting:true,
+    calories:165, calRange:"150–180 kcal", calNote:"Per single injera piece",
+    description:"Ethiopia's staple sourdough flatbread made from fermented teff flour. Serves as both plate and utensil.",
+    ingredients:["Teff flour","Water","Starter / Ersho","Salt"],
+    steps:["Mix teff flour with water and ersho starter.","Let ferment for 2–3 days at room temperature.","Stir the batter until smooth.","Pour onto a hot mitad (clay griddle) in a spiral.","Cover and cook for 2–3 minutes until holes form.","Remove and cool on a flat basket."],
+    benefits:[{icon:"🌾",text:"Rich in fiber and iron — helps prevent anemia."},{icon:"💪",text:"High in calcium for strong bones."},{icon:"🦠",text:"Fermentation creates gut-friendly probiotics."},{icon:"✅",text:"Naturally gluten-free when made from pure teff."}]
+  },
+  { id:2, name:"Shiro Wat", amharic:"ሽሮ ወጥ", category:"stew", tagLabel:"Stew", tagClass:"tag-stew", emoji:"🥣", fasting:true,
+    calories:300, calRange:"250–350 kcal", calNote:"One serving with injera",
+    description:"A thick, spicy stew made from ground chickpeas. One of Ethiopia's most popular fasting dishes.",
+    ingredients:["Chickpea flour","Onions","Garlic","Berbere","Oil"],
+    steps:["Sauté finely chopped onions in oil until golden.","Add garlic and cook 2 minutes.","Stir in berbere spice.","Slowly whisk in shiro powder with water.","Simmer on low heat, stirring constantly for 15 min.","Season with salt and serve hot."],
+    benefits:[{icon:"🫘",text:"High in plant protein and fiber."},{icon:"❤️",text:"Helps lower LDL cholesterol."},{icon:"🩸",text:"Good source of iron."},{icon:"🌿",text:"Vegan-friendly, great for fasting."}]
+  },
+  { id:3, name:"Dinich Wat", amharic:"ድንች ወጥ", category:"stew", tagLabel:"Stew", tagClass:"tag-stew", emoji:"🥔", fasting:true,
+    calories:230, calRange:"180–280 kcal", calNote:"One serving",
+    description:"A flavorful potato stew with berbere and garlic. Common during fasting seasons.",
+    ingredients:["Potatoes","Onions","Tomatoes","Garlic","Berbere","Oil"],
+    steps:["Dice onions and sauté in oil until soft.","Add garlic and berbere, cook 2 min.","Add chopped tomatoes and stir.","Add cubed potatoes and enough water to cover.","Simmer 20 min until potatoes are tender.","Adjust salt and serve with injera."],
+    benefits:[{icon:"🥔",text:"Rich in vitamin C and potassium."},{icon:"⚡",text:"Good carbohydrate source for energy."},{icon:"🌿",text:"Vegan and low in fat."},{icon:"🔥",text:"Berbere boosts metabolism."}]
+  },
+  { id:4, name:"Gomen", amharic:"ጎመን", category:"salad", tagLabel:"Side", tagClass:"tag-salad", emoji:"🥬", fasting:true,
+    calories:150, calRange:"120–180 kcal", calNote:"One serving",
+    description:"Cooked collard greens sautéed with onions and garlic. Served alongside injera and stews.",
+    ingredients:["Collard greens","Onions","Garlic","Oil","Spices"],
+    steps:["Wash and chop collard greens finely.","Sauté onions in oil until translucent.","Add garlic and stir 1 minute.","Add chopped greens and stir to combine.","Cook on medium heat for 10–15 minutes.","Season with salt and serve warm."],
+    benefits:[{icon:"🥬",text:"High in vitamins A, C, and K."},{icon:"💪",text:"Rich in calcium and fiber."},{icon:"❤️",text:"Supports heart and bone health."},{icon:"🌿",text:"Low calories — great for weight management."}]
+  },
+  { id:5, name:"Key Sir", amharic:"ቀይ ሥር", category:"salad", tagLabel:"Side", tagClass:"tag-salad", emoji:"🫚", fasting:true,
+    calories:140, calRange:"100–180 kcal", calNote:"One serving",
+    description:"A beetroot side dish commonly included in vegetarian platters.",
+    ingredients:["Beetroot","Onions","Garlic","Oil"],
+    steps:["Boil beetroot until tender, then peel and dice.","Sauté onions in oil until soft.","Add garlic and cook 1 minute.","Add diced beetroot and mix well.","Season with salt and a pinch of spice.","Serve warm or at room temperature."],
+    benefits:[{icon:"🫀",text:"Rich in antioxidants for heart health."},{icon:"🩸",text:"Good source of folate."},{icon:"💧",text:"High water content supports hydration."},{icon:"🌿",text:"Rich in dietary fiber."}]
+  },
+  { id:6, name:"Misir Wat", amharic:"ምስር ወጥ", category:"stew", tagLabel:"Stew", tagClass:"tag-stew", emoji:"🫘", fasting:true,
+    calories:270, calRange:"220–320 kcal", calNote:"One serving",
+    description:"A spicy red lentil stew especially popular during fasting periods.",
+    ingredients:["Red lentils","Onions","Garlic","Berbere","Oil"],
+    steps:["Rinse red lentils and set aside.","Sauté onions in oil until golden brown.","Add garlic and berbere, cook 2 min.","Add lentils and enough water to cover by 2 inches.","Simmer 20–25 minutes until lentils are soft.","Stir well, adjust salt, and serve hot."],
+    benefits:[{icon:"🫘",text:"Packed with plant protein — 18g per cup."},{icon:"🩸",text:"High in iron and folate."},{icon:"🩺",text:"Low glycemic index — regulates blood sugar."},{icon:"🌿",text:"Rich in protective polyphenols."}]
+  },
+  { id:7, name:"Kik Alicha", amharic:"ክክ አልጫ", category:"stew", tagLabel:"Stew", tagClass:"tag-stew", emoji:"🟡", fasting:true,
+    calories:250, calRange:"200–300 kcal", calNote:"One serving",
+    description:"A mild yellow split-pea stew with turmeric. Often served alongside spicier dishes.",
+    ingredients:["Split peas","Onions","Garlic","Turmeric","Oil"],
+    steps:["Boil split peas until partially soft, drain.","Sauté onions in oil until golden.","Add garlic and turmeric, stir 1 minute.","Add split peas and water.","Simmer 20 minutes until creamy.","Season with salt and serve."],
+    benefits:[{icon:"💛",text:"Turmeric has powerful anti-inflammatory properties."},{icon:"🫘",text:"High in plant protein and fiber."},{icon:"🩺",text:"Easy on digestion."},{icon:"🌿",text:"Low fat — suitable for fasting diets."}]
+  },
+  { id:8, name:"Atkilt Wat", amharic:"አትክልት ወጥ", category:"stew", tagLabel:"Stew", tagClass:"tag-stew", emoji:"🥕", fasting:true,
+    calories:200, calRange:"150–250 kcal", calNote:"One serving",
+    description:"A mild vegetable stew with cabbage, carrots, and potatoes. Common on fasting days.",
+    ingredients:["Cabbage","Carrots","Potatoes","Onions","Turmeric"],
+    steps:["Sauté onions in oil until soft.","Add turmeric and stir 30 seconds.","Add sliced carrots and potatoes.","Add shredded cabbage and mix well.","Add a splash of water, cover and cook 15 min.","Season and serve with injera."],
+    benefits:[{icon:"🥕",text:"Carrots rich in beta-carotene for eye health."},{icon:"💛",text:"Turmeric reduces inflammation."},{icon:"🥬",text:"Cabbage is high in vitamin C."},{icon:"🌿",text:"Low calorie and high in fiber."}]
+  },
+  { id:9, name:"Sega Wat", amharic:"ሥጋ ወጥ", category:"stew", tagLabel:"Stew", tagClass:"tag-stew", emoji:"🥩", fasting:false,
+    calories:425, calRange:"350–500 kcal", calNote:"One serving with injera",
+    description:"A spicy beef stew served during holidays and family gatherings. Rich and deeply flavorful.",
+    ingredients:["Beef","Onions","Berbere","Garlic","Niter kibbeh"],
+    steps:["Slow-cook finely diced onions in oil — no water — for 30 min.","Add niter kibbeh and berbere, stir well.","Add cubed beef and brown on all sides.","Add garlic and ginger, cook 2 minutes.","Add a little water and simmer 40 min.","Serve hot with injera."],
+    benefits:[{icon:"🥩",text:"Excellent source of protein and iron."},{icon:"🧬",text:"Rich in vitamin B12 for nerve health."},{icon:"💪",text:"Zinc supports immune system."},{icon:"🔥",text:"Berbere boosts metabolism."}]
+  },
+  { id:10, name:"Doro Wat", amharic:"ዶሮ ወጥ", category:"stew", tagLabel:"Stew", tagClass:"tag-stew", emoji:"🍗", fasting:false,
+    calories:425, calRange:"350–500 kcal", calNote:"With chicken & injera",
+    description:"Ethiopia's famous spicy chicken stew, traditionally served during Easter and Christmas with hard-boiled eggs.",
+    ingredients:["Chicken","Onions","Berbere","Garlic","Ginger","Niter kibbeh","Boiled eggs"],
+    steps:["Marinate chicken in lemon juice and salt for 30 min.","Cook onions dry (no oil) for 30 min, then add niter kibbeh.","Add berbere and cook 10 minutes on low heat.","Add chicken pieces and coat in sauce.","Add garlic, ginger, and a little water.","Simmer 45 min, add boiled eggs at the end."],
+    benefits:[{icon:"🍗",text:"High in lean protein."},{icon:"🥚",text:"Eggs rich in vitamin D and B12."},{icon:"🌶️",text:"Berbere boosts metabolism."},{icon:"🧈",text:"Niter kibbeh provides healthy fats."}]
+  },
+  { id:11, name:"Tibs", amharic:"ጥብስ", category:"stew", tagLabel:"Stew", tagClass:"tag-stew", emoji:"🥩", fasting:false,
+    calories:425, calRange:"350–500 kcal", calNote:"One serving",
+    description:"Sautéed meat with vegetables and spices. One of the most popular restaurant dishes in Ethiopia.",
+    ingredients:["Beef or lamb","Onions","Peppers","Butter","Spices"],
+    steps:["Cut meat into small cubes and season.","Heat butter in a pan until hot.","Add meat and sear on high heat for 3–4 min.","Add sliced onions and peppers.","Stir-fry together for 5 minutes.","Serve immediately on a hot plate with injera."],
+    benefits:[{icon:"🥩",text:"Rich in protein, iron, and zinc."},{icon:"💪",text:"Supports muscle building."},{icon:"🧅",text:"Onions and peppers add vitamin C."},{icon:"🌿",text:"Spices have antioxidant properties."}]
+  },
+  { id:12, name:"Kitfo", amharic:"ክትፎ", category:"stew", tagLabel:"Stew", tagClass:"tag-stew", emoji:"🥩", fasting:false,
+    calories:525, calRange:"450–600 kcal", calNote:"One serving",
+    description:"Finely minced beef mixed with seasoned butter and mitmita. A festive Ethiopian delicacy.",
+    ingredients:["Minced beef","Niter kibbeh","Mitmita spice"],
+    steps:["Warm niter kibbeh gently in a pan.","Add mitmita and korarima spice to the butter.","Add finely minced raw beef.","Mix well — serve raw (tire), lightly heated (leb leb), or cooked.","Serve with ayib (cottage cheese) and gomen.","Eat immediately with injera."],
+    benefits:[{icon:"🥩",text:"Very high in protein and B vitamins."},{icon:"🌶️",text:"Mitmita has antimicrobial properties."},{icon:"🧈",text:"Niter kibbeh provides fat-soluble vitamins."},{icon:"🧬",text:"Rich in vitamin B12."}]
+  },
+  { id:13, name:"Dulet", amharic:"ዱለት", category:"stew", tagLabel:"Stew", tagClass:"tag-stew", emoji:"🫀", fasting:false,
+    calories:475, calRange:"400–550 kcal", calNote:"One serving",
+    description:"A spicy dish of finely chopped organ meats — liver, tripe, and minced meat. Served in traditional restaurants.",
+    ingredients:["Beef liver","Tripe","Minced meat","Onions","Peppers","Butter"],
+    steps:["Parboil tripe until tender, then chop finely.","Chop liver into very small pieces.","Sauté onions in butter until soft.","Add peppers and spices, cook 2 min.","Add minced meat, tripe, and liver.","Cook on medium heat 10 min, stirring often."],
+    benefits:[{icon:"🩸",text:"Liver is richest source of iron and vitamin A."},{icon:"🧬",text:"Extremely high in vitamin B12."},{icon:"💪",text:"High protein supports muscle health."},{icon:"🔬",text:"Rich in CoQ10 for cellular energy."}]
+  },
+  { id:14, name:"Firfir", amharic:"ፍርፍር", category:"breakfast", tagLabel:"Breakfast", tagClass:"tag-breakfast", emoji:"🍳", fasting:true,
+    calories:375, calRange:"300–450 kcal", calNote:"One plate",
+    description:"Torn injera mixed with spicy berbere sauce. A popular and warming Ethiopian breakfast.",
+    ingredients:["Torn injera","Berbere sauce","Onions","Butter or oil"],
+    steps:["Sauté onions in butter until golden.","Add berbere and cook 2 minutes.","Tear injera into bite-size pieces.","Add injera pieces to the sauce.","Stir and mix until fully coated.","Serve warm immediately."],
+    benefits:[{icon:"⚡",text:"Provides carbohydrates for morning energy."},{icon:"🔥",text:"Berbere activates metabolism."},{icon:"🌾",text:"Teff injera adds fiber and iron."},{icon:"🧈",text:"Butter provides healthy fats."}]
+  },
+  { id:15, name:"Enkulal Tibs", amharic:"እንቁላል ጥብስ", category:"breakfast", tagLabel:"Breakfast", tagClass:"tag-breakfast", emoji:"🍳", fasting:true,
+    calories:285, calRange:"220–350 kcal", calNote:"One serving",
+    description:"Stir-fried eggs with onions, tomatoes, and peppers. A quick Ethiopian breakfast or light meal.",
+    ingredients:["Eggs","Onions","Tomatoes","Peppers","Oil","Spices"],
+    steps:["Heat oil in a pan over medium heat.","Sauté onions until translucent.","Add tomatoes and peppers, cook 3 min.","Crack eggs into the pan.","Scramble or cook to your preference.","Season with salt and serve with bread or injera."],
+    benefits:[{icon:"🥚",text:"High in protein and vitamin D."},{icon:"🧠",text:"Choline in eggs supports brain function."},{icon:"🍅",text:"Tomatoes provide lycopene and vitamin C."},{icon:"⚡",text:"Quick energy for the morning."}]
+  },
+  { id:16, name:"Ful", amharic:"ፉል", category:"breakfast", tagLabel:"Breakfast", tagClass:"tag-breakfast", emoji:"🫘", fasting:true,
+    calories:375, calRange:"300–450 kcal", calNote:"One serving",
+    description:"A hearty breakfast of cooked fava beans mixed with vegetables and spices. Widely eaten across Ethiopia.",
+    ingredients:["Fava beans","Onions","Tomatoes","Peppers","Olive oil"],
+    steps:["Soak and boil fava beans until soft.","Mash lightly with a fork.","Sauté onions, tomatoes, and peppers in oil.","Mix into the fava beans.","Add spices and stir well.","Serve topped with olive oil and bread."],
+    benefits:[{icon:"🫘",text:"Rich in plant protein and fiber."},{icon:"🩸",text:"High in folate for blood production."},{icon:"❤️",text:"Helps lower cholesterol."},{icon:"⚡",text:"Slow-burning energy keeps you full."}]
+  },
+  { id:17, name:"Genfo", amharic:"ገንፎ", category:"porridge", tagLabel:"Porridge", tagClass:"tag-porridge", emoji:"🥣", fasting:true,
+    calories:325, calRange:"250–400 kcal", calNote:"One bowl",
+    description:"Thick barley or wheat porridge shaped into a dome with butter and berbere in the center. A traditional breakfast.",
+    ingredients:["Barley or wheat flour","Water","Butter","Berbere"],
+    steps:["Boil water in a pot with a pinch of salt.","Slowly pour in barley flour while stirring.","Stir vigorously to avoid lumps.","Cook on low heat 10–15 min until very thick.","Shape into a dome in a bowl.","Make a well in the center and add butter and berbere."],
+    benefits:[{icon:"🌾",text:"High in fiber for digestion."},{icon:"❤️",text:"Beta-glucan lowers bad cholesterol."},{icon:"⚡",text:"Slow-releasing energy."},{icon:"🤱",text:"Traditionally given to new mothers."}]
+  },
+  { id:18, name:"Kinche", amharic:"ቂንጬ", category:"porridge", tagLabel:"Porridge", tagClass:"tag-porridge", emoji:"🥣", fasting:true,
+    calories:300, calRange:"250–350 kcal", calNote:"One bowl",
+    description:"Boiled cracked wheat served as a breakfast dish, often with butter and salt.",
+    ingredients:["Cracked wheat","Butter","Salt"],
+    steps:["Rinse cracked wheat under cold water.","Boil 2 cups water with a pinch of salt.","Add cracked wheat and stir.","Simmer on low heat for 15–20 minutes.","Stir in butter until melted.","Serve warm in a bowl."],
+    benefits:[{icon:"🌾",text:"Rich in fiber and complex carbohydrates."},{icon:"💪",text:"Provides sustained energy."},{icon:"🦴",text:"Magnesium and phosphorus for bones."},{icon:"🫀",text:"Whole grain supports heart health."}]
+  },
+  { id:19, name:"Chechebsa", amharic:"ጨጨብሳ", category:"breakfast", tagLabel:"Breakfast", tagClass:"tag-breakfast", emoji:"🧈", fasting:false,
+    calories:425, calRange:"350–500 kcal", calNote:"One serving",
+    description:"Torn flatbread mixed with butter and berbere. Especially popular in Oromia for breakfast.",
+    ingredients:["Flatbread","Butter","Berbere"],
+    steps:["Bake or use ready flatbread (kita).","Tear the bread into small pieces.","Melt butter in a pan on low heat.","Add berbere to the butter and stir.","Add torn bread and mix until coated.","Serve warm."],
+    benefits:[{icon:"⚡",text:"Energy from carbohydrates and fats."},{icon:"🔥",text:"Berbere boosts metabolism."},{icon:"🧈",text:"Butter provides vitamins A, D, E, K."},{icon:"🌾",text:"Wheat provides B vitamins."}]
+  },
+  { id:20, name:"Kocho", amharic:"ቆጮ", category:"bread", tagLabel:"Bread", tagClass:"tag-bread", emoji:"🌿", fasting:true,
+    calories:300, calRange:"250–350 kcal", calNote:"One serving",
+    description:"A staple of the Gurage people made from fermented enset (false banana) pulp.",
+    ingredients:["Fermented enset pulp"],
+    steps:["Scrape enset pulp and ferment for weeks underground.","Remove and press out excess liquid.","Shape into flat cakes.","Cook on a hot griddle without oil.","Flip once and cook until firm.","Serve with kitfo or other dishes."],
+    benefits:[{icon:"🌿",text:"Good source of carbohydrates and fiber."},{icon:"🦠",text:"Fermentation adds probiotic benefits."},{icon:"🌱",text:"Enset is drought-resistant — a food security crop."},{icon:"💪",text:"Provides sustained energy."}]
+  },
+  { id:21, name:"Bulla", amharic:"ቡላ", category:"porridge", tagLabel:"Porridge", tagClass:"tag-porridge", emoji:"🥛", fasting:true,
+    calories:250, calRange:"200–300 kcal", calNote:"One serving",
+    description:"A smooth porridge made from enset starch. Gentle and nourishing, often served to guests or new mothers.",
+    ingredients:["Enset starch","Water or milk"],
+    steps:["Mix enset starch with cold water to a paste.","Bring remaining water or milk to a boil.","Add the paste slowly while stirring.","Cook on medium heat, stirring until thick.","Add sugar or honey if desired.","Serve warm."],
+    benefits:[{icon:"🤱",text:"Easy to digest — ideal for recovery."},{icon:"⚡",text:"Provides quick and clean energy."},{icon:"💧",text:"High water content supports hydration."},{icon:"🌿",text:"Light on the stomach."}]
+  },
+  { id:22, name:"Ambasha", amharic:"አምባሻ", category:"bread", tagLabel:"Bread", tagClass:"tag-bread", emoji:"🍞", fasting:false,
+    calories:270, calRange:"220–320 kcal", calNote:"One slice",
+    description:"A slightly sweet traditional bread baked during holidays and celebrations, decorated with patterns.",
+    ingredients:["Wheat flour","Yeast","Sugar","Spices"],
+    steps:["Mix flour, yeast, sugar, and spices with warm water.","Knead dough for 10 minutes until smooth.","Let rise for 1 hour covered.","Shape into a round flat loaf.","Score decorative patterns on top.","Bake at 180°C (350°F) for 25–30 min."],
+    benefits:[{icon:"🌾",text:"Good source of carbohydrates."},{icon:"😊",text:"Traditionally eaten during celebrations."},{icon:"🫁",text:"Yeast fermentation improves nutrients."},{icon:"⚡",text:"Provides energy from carbohydrates."}]
+  },
+  { id:23, name:"Dabo", amharic:"ዳቦ", category:"bread", tagLabel:"Bread", tagClass:"tag-bread", emoji:"🍞", fasting:false,
+    calories:215, calRange:"180–250 kcal", calNote:"One slice",
+    description:"Traditional Ethiopian bread eaten with tea, coffee, or stews. A daily staple in many households.",
+    ingredients:["Wheat flour","Yeast","Salt","Water"],
+    steps:["Mix flour, yeast, salt, and warm water.","Knead into a smooth dough.","Let rise for 45 minutes.","Shape into a round loaf.","Bake at 180°C (350°F) for 30 min.","Cool before slicing."],
+    benefits:[{icon:"🌾",text:"Provides energy from complex carbs."},{icon:"🦠",text:"Yeast provides B vitamins."},{icon:"⚡",text:"Good energy for active days."},{icon:"☕",text:"Pairs perfectly with Ethiopian coffee."}]
+  },
+  { id:24, name:"Beso", amharic:"በሶ", category:"snack", tagLabel:"Snack", tagClass:"tag-snack", emoji:"🌾", fasting:true,
+    calories:240, calRange:"180–300 kcal", calNote:"One serving",
+    description:"Roasted barley flour mixed into a drink or thick paste. A nutritious traditional snack or light meal.",
+    ingredients:["Roasted barley flour","Water","Milk","Sugar or honey"],
+    steps:["Dry-roast barley flour until golden and fragrant.","Let cool completely.","Mix with cold water or milk to your preferred consistency.","Add sugar or honey to taste.","Stir or shake well.","Drink as a beverage or eat as a thick paste."],
+    benefits:[{icon:"🌾",text:"Rich in fiber and minerals."},{icon:"⚡",text:"Good energy source."},{icon:"🦴",text:"Milk adds calcium for bones."},{icon:"🍯",text:"Honey adds antioxidants."}]
+  },
+  { id:25, name:"Nifro", amharic:"ንፍሮ", category:"snack", tagLabel:"Snack", tagClass:"tag-snack", emoji:"🌽", fasting:true,
+    calories:215, calRange:"180–250 kcal", calNote:"One serving",
+    description:"Boiled grains — wheat or maize — eaten as a snack or breakfast. Simple, filling, and nutritious.",
+    ingredients:["Boiled wheat or maize","Salt"],
+    steps:["Soak grains overnight in water.","Drain and rinse.","Boil in fresh water with a pinch of salt.","Cook until grains are tender, about 30–40 min.","Drain and serve warm or at room temperature.","Can be eaten plain or with a drizzle of butter."],
+    benefits:[{icon:"🌾",text:"High in complex carbohydrates and fiber."},{icon:"💪",text:"Magnesium for muscle function."},{icon:"⚡",text:"Sustained energy without sugar spikes."},{icon:"🌿",text:"Very low in fat."}]
+  },
+  { id:26, name:"Qolo", amharic:"ቆሎ", category:"snack", tagLabel:"Snack", tagClass:"tag-snack", emoji:"🥜", fasting:true,
+    calories:215, calRange:"180–250 kcal", calNote:"Per handful",
+    description:"Crunchy roasted grains with barley, wheat, chickpeas, and peanuts. A popular Ethiopian street snack.",
+    ingredients:["Roasted barley","Roasted wheat","Chickpeas","Peanuts"],
+    steps:["Dry-roast barley and wheat separately in a pan.","Roast chickpeas until crunchy.","Roast peanuts until golden.","Let all cool completely.","Mix together in a bowl.","Store in a dry container and snack anytime."],
+    benefits:[{icon:"🫘",text:"Good source of fiber, protein, and healthy fats."},{icon:"🥜",text:"Peanuts provide heart-healthy fats."},{icon:"⚡",text:"Portable energy — great for travel."},{icon:"💪",text:"Chickpeas add plant protein."}]
+  },
+  { id:27, name:"Sandwich", amharic:"ሳንድዊች", category:"breakfast", tagLabel:"Breakfast", tagClass:"tag-breakfast", emoji:"🥪", fasting:false,
+    calories:350, calRange:"250–450 kcal", calNote:"One sandwich",
+    description:"A quick meal eaten for breakfast or lunch in homes, cafés, and schools throughout Ethiopia.",
+    ingredients:["Bread","Eggs or meat","Cheese","Vegetables"],
+    steps:["Toast or use fresh bread slices.","Fry egg or prepare meat filling.","Slice tomatoes, onions, and peppers.","Layer filling and vegetables on bread.","Add cheese if desired.","Close and serve immediately."],
+    benefits:[{icon:"🌾",text:"Bread provides carbohydrates for energy."},{icon:"🥚",text:"Eggs and meat add protein."},{icon:"🧀",text:"Cheese adds calcium."},{icon:"🥬",text:"Vegetables contribute vitamins and fiber."}]
+  },
+  { id:28, name:"Pasta", amharic:"ፓስታ", category:"grain", tagLabel:"Grain", tagClass:"tag-grain", emoji:"🍝", fasting:false,
+    calories:375, calRange:"300–450 kcal", calNote:"One plate",
+    description:"Boiled pasta with tomato or meat sauce. Widely enjoyed in Ethiopian households for lunch and dinner.",
+    ingredients:["Pasta","Tomato sauce","Onions","Garlic","Oil","Spices"],
+    steps:["Boil pasta in salted water until al dente.","Sauté onions and garlic in oil.","Add tomato sauce and spices.","Simmer sauce 10 minutes.","Drain pasta and mix with sauce.","Serve with grated cheese if available."],
+    benefits:[{icon:"⚡",text:"Good source of carbohydrates."},{icon:"🍅",text:"Tomato sauce rich in lycopene."},{icon:"🧄",text:"Garlic has antibacterial properties."},{icon:"🌿",text:"Adding vegetables boosts vitamins."}]
+  },
+  { id:29, name:"Macaroni", amharic:"ማካሮኒ", category:"grain", tagLabel:"Grain", tagClass:"tag-grain", emoji:"🍝", fasting:false,
+    calories:375, calRange:"300–450 kcal", calNote:"One plate",
+    description:"Macaroni prepared with tomato sauce, vegetables, or meat. Popular for lunch and dinner.",
+    ingredients:["Macaroni","Tomato sauce","Onions","Garlic","Oil","Spices"],
+    steps:["Boil macaroni in salted water, drain.","Sauté onions and garlic in oil.","Add tomato sauce and spices, simmer 8 min.","Combine macaroni and sauce.","Stir well and heat through.","Serve hot with bread or salad."],
+    benefits:[{icon:"⚡",text:"Provides carbohydrates for energy."},{icon:"🍅",text:"Tomatoes add vitamin C."},{icon:"🌿",text:"Vegetables add fiber."},{icon:"💪",text:"Adding meat boosts protein."}]
+  },
+  { id:30, name:"Rice", amharic:"ሩዝ", category:"grain", tagLabel:"Grain", tagClass:"tag-grain", emoji:"🍚", fasting:false,
+    calories:250, calRange:"200–300 kcal", calNote:"One serving",
+    description:"Steamed or seasoned rice served with meat, vegetables, or stews in Ethiopian homes and restaurants.",
+    ingredients:["Rice","Water","Oil or butter","Spices"],
+    steps:["Rinse rice until water runs clear.","Boil water with a pinch of salt and oil.","Add rice and stir once.","Cover and cook on low heat for 18 min.","Fluff with a fork before serving.","Serve with your choice of stew or vegetables."],
+    benefits:[{icon:"⚡",text:"Good source of carbohydrates and B vitamins."},{icon:"🌾",text:"Easy to digest."},{icon:"💧",text:"Cooked rice supports hydration."},{icon:"🌿",text:"Low in fat — versatile base."}]
+  },
+  { id:31, name:"Buna", amharic:"ቡና", category:"drink", tagLabel:"Drink", tagClass:"tag-drink", emoji:"☕", fasting:true,
+    calories:15, calRange:"5–30 kcal", calNote:"One cup, black",
+    description:"The Ethiopian coffee ceremony — one of the world's oldest coffee traditions. Beans roasted fresh, ground by hand, brewed in a clay jebena pot.",
+    ingredients:["Green coffee beans","Water","Sugar (optional)","Rue herb (optional)"],
+    steps:["Wash green coffee beans and dry.","Roast in a pan over open flame, shaking constantly.","Grind roasted beans using a mortar.","Boil water in a jebena (clay pot).","Add ground coffee and simmer 5 min.","Pour through a strainer into small cups."],
+    benefits:[{icon:"🧠",text:"Caffeine improves focus and alertness."},{icon:"❤️",text:"Antioxidants reduce heart disease risk."},{icon:"🔥",text:"Boosts metabolic rate."},{icon:"😊",text:"The ceremony reduces stress and builds community."}]
+  },
+  { id:32, name:"Tej", amharic:"ጠጅ", category:"drink", tagLabel:"Drink", tagClass:"tag-drink", emoji:"🍯", fasting:false,
+    calories:160, calRange:"120–200 kcal", calNote:"One birille glass",
+    description:"Ethiopia's traditional honey wine brewed with water, honey, and gesho herb. Served in flask-shaped birille glasses.",
+    ingredients:["Honey","Water","Gesho herb","Natural yeast"],
+    steps:["Dissolve honey in warm water in a large jar.","Add gesho branches and stir well.","Cover loosely and leave at room temperature.","Stir daily for 5–7 days during fermentation.","Strain out gesho and solids.","Pour into birille glasses and serve."],
+    benefits:[{icon:"🍯",text:"Honey is antibacterial and antioxidant-rich."},{icon:"🌿",text:"Gesho has digestive properties."},{icon:"🦠",text:"Natural fermentation creates probiotics."},{icon:"😌",text:"Moderate consumption may reduce stress."}]
+  },
+  { id:33, name:"Tella", amharic:"ጠላ", category:"drink", tagLabel:"Drink", tagClass:"tag-drink", emoji:"🍺", fasting:false,
+    calories:80, calRange:"60–120 kcal", calNote:"One cup",
+    description:"A traditional Ethiopian home-brewed beer made from barley, gesho, and sorghum. A staple at community gatherings and ceremonies.",
+    ingredients:["Barley","Sorghum","Gesho","Water","Starter culture"],
+    steps:["Roast barley and grind coarsely.","Mix with water and gesho branches.","Add a starter culture from previous batch.","Ferment in a clay pot for 3–5 days.","Strain through cloth to remove solids.","Serve in a traditional clay cup."],
+    benefits:[{icon:"🌾",text:"Barley provides B vitamins and minerals."},{icon:"🦠",text:"Fermentation creates gut-friendly probiotics."},{icon:"🌿",text:"Gesho has digestive and antimicrobial properties."},{icon:"😊",text:"Brings communities together at ceremonies."}]
+  },
+  { id:34, name:"Spris", amharic:"ስፕሪስ", category:"drink", tagLabel:"Drink", tagClass:"tag-drink", emoji:"🥤", fasting:true,
+    calories:180, calRange:"150–220 kcal", calNote:"One large glass",
+    description:"A modern Ethiopian café favourite — layers of avocado, mango, and papaya juice stacked in a tall glass. Sold at juice bars all over Addis Ababa.",
+    ingredients:["Avocado","Mango","Papaya","Sugar","Water or milk"],
+    steps:["Blend avocado with a little sugar and milk until smooth.","Blend mango separately with sugar and water.","Blend papaya separately with sugar and water.","Pour papaya layer into a tall glass first.","Add mango layer gently on top.","Spoon avocado layer on top and serve with a straw."],
+    benefits:[{icon:"🥑",text:"Avocado is packed with healthy monounsaturated fats."},{icon:"🥭",text:"Mango is rich in vitamin C and immune-boosting antioxidants."},{icon:"🍈",text:"Papaya contains papain which aids digestion."},{icon:"⚡",text:"Natural sugars give a quick and clean energy boost."}]
+  }
+]; } // end if(false) ignored block
+
+let currentCat = 'all';
+let fastingOnly = false;
+let favOnly = false;
+let favorites = JSON.parse(localStorage.getItem('ethFavs') || '[]');
+
+function saveFavs() { localStorage.setItem('ethFavs', JSON.stringify(favorites)); }
+
+function toggleFav(id, e) {
+  e.stopPropagation();
+  if (favorites.includes(id)) favorites = favorites.filter(f => f !== id);
+  else favorites.push(id);
+  saveFavs();
+  applyFilters();
+}
+
+function setCat(cat, btn) {
+  currentCat = cat;
+  document.querySelectorAll('.filter-btn[data-cat]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function toggleFasting(btn) {
+  fastingOnly = !fastingOnly;
+  btn.classList.toggle('active', fastingOnly);
+  applyFilters();
+}
+
+function toggleFavFilter(btn) {
+  favOnly = !favOnly;
+  btn.classList.toggle('active', favOnly);
+  applyFilters();
+}
+
+function applyFilters() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  let list = recipes;
+  if (currentCat !== 'all') list = list.filter(r => r.category === currentCat);
+  if (fastingOnly) list = list.filter(r => r.fasting);
+  if (favOnly) list = list.filter(r => favorites.includes(r.id));
+  if (q) list = list.filter(r => r.name.toLowerCase().includes(q) || r.amharic.includes(q) || r.description.toLowerCase().includes(q));
+  document.getElementById('stats').textContent = `Showing ${list.length} of ${recipes.length} recipes`;
+  renderCards(list);
+}
+
+function renderCards(list) {
+  const grid = document.getElementById('recipe-grid');
+  if (list.length === 0) {
+    grid.innerHTML = `<div class="no-results">😕 No recipes found. Try a different search or filter.</div>`;
+    return;
+  }
+  grid.innerHTML = list.map((r, i) => {
+    const pct = Math.min(100, Math.round((r.calories / 600) * 100));
+    const isFav = favorites.includes(r.id);
+    return `
+      <div class="card" style="animation-delay:${i * 0.05}s" onclick="goToDetail(${r.id})">
+        <div class="card-banner"></div>
+        <div class="card-body">
+          <div class="card-top">
+            <span class="tag ${r.tagClass}">${r.tagLabel}</span>
+            <button class="heart-btn ${isFav ? 'fav' : ''}" onclick="toggleFav(${r.id}, event)" title="${isFav ? 'Remove from favorites' : 'Add to favorites'}">${isFav ? '❤️' : '🤍'}</button>
+          </div>
+          <div class="food-emoji">${r.emoji}</div>
+          <h2>${r.name}</h2>
+          <div class="amharic">${r.amharic}</div>
+          <p class="description">${r.description}</p>
+          <div class="calorie-bar">
+            <span>🔥</span>
+            <div class="cal-track"><div class="cal-fill" style="width:${pct}%"></div></div>
+            <span class="cal-label">${r.calRange}</span>
+          </div>
+          ${r.fasting ? '<span class="fasting-badge">🌿 Fasting Friendly</span>' : ''}
+        </div>
+        <div class="card-footer">
+          <span>${r.ingredients.length} ingredients</span>
+          <button class="view-btn">View Recipe →</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function goToDetail(id) {
+  window.location.href = `recipe-detail.html?id=${id}`;
+}
+
+function toggleDark() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('darkToggle').textContent = isDark ? '🌙' : '☀️';
+  localStorage.setItem('ethTheme', isDark ? 'light' : 'dark');
+}
+
+// Restore theme
+const savedTheme = localStorage.getItem('ethTheme');
+if (savedTheme) {
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  document.getElementById('darkToggle').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+}
+
+applyFilters();
+</script>
+</body>
+</html>
